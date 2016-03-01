@@ -1,4 +1,4 @@
-git is a distributed version control ststem.
+adskfjaljljsljsldgit is a distributed version control ststem.
 git is free software distributed under the GPL
 6666666666666
 克隆克隆
