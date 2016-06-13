@@ -1,0 +1,57 @@
+@charset "utf-8";
+@import "core/variable";
+@import "core/mixin";
+@import "core/reset";
+@import "module/m-box";
+
+%box-sizing{
+	width: 1rem;
+	height: 1rem;
+	margin: .1rem;
+	padding: .2rem;
+	border: 5px solid #000;
+	background-color: red;
+}
+.content-box{
+	@extend %box-sizing;
+	@include box-sizing(content-box);
+}
+.border-box{
+	@extend %box-sizing;
+		@include box-sizing(border-box);
+}
+
+.img-box{
+	background-color: orange;
+	text-align: center;
+	img{
+		width: 80%;
+	}
+	.text{
+		background-color: green;
+	}
+}
+
+.lookLikeAButton{
+	@include appearance(button);
+}
+/*看起来像个清单盒子，以listbox风格渲染*/
+.lookLikeAListbox{
+	@include appearance(listbox);
+}
+/*看起来像个清单列表，以listitem风格渲染*/
+.lookLikeAListitem{
+	@include appearance(listitem);
+}
+/*看起来像个搜索框，以searchfield风格渲染*/
+.lookLikeASearchfield{
+	@include appearance(searchfield);
+}
+/*看起来像个文本域，以textarea风格渲染*/
+.lookLikeATextarea{
+	@include appearance(textarea);
+}
+/*看起来像个下接菜单，以menulist风格渲染*/
+.lookLikeAMenulist{
+	@include appearance(menulist);
+}

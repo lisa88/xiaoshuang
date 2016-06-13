@@ -1,0 +1,96 @@
+@charset "utf-8";
+/*给需要的属性加厂家前缀*/
+@mixin prefix($property, $value) {
+    // 老式浏览器
+    // 是否开启厂商前缀支持
+    @if map-get($setting, is-vendor-prefix) {
+        // 遍历输出厂商代码
+        @each $vendor in map-get($setting, vendor-prefix) {
+            #{$vendor}#{$property}: $value;
+        }
+    }
+    // 现代浏览器（支持最新草案）
+    #{$property}: $value;
+}
+
+/* 定义盒模型 */
+@mixin box-sizing($box-sizing: border-box) {
+    @include prefix(box-sizing, $box-sizing);
+}
+
+ /* 定义文档根节点是否允许滚动 */
+@mixin root-scroll($is-scroll: false) {
+    html,
+    body {
+        @if $is-scroll {
+            overflow: visible;
+            height: auto;
+        } @else {
+            overflow: hidden;
+            height: 100%;
+        }
+    }
+}
+
+
+ /*定义是否可以选中页面内容*/
+@mixin user-select($user-select: none) {
+    @include prefix(user-select, $user-select);
+}
+
+/*定义是否有滚动条*/
+@mixin overflow($overflow: auto) {
+    @if $overflow == auto {
+        overflow: auto;
+        // 移除此条规则，防止iOS webview崩溃
+        // -webkit-overflow-scrolling: touch;
+    } @else {
+        overflow: $overflow;
+    }
+}
+
+/*定义UA默认外观*/
+@mixin appearance($appearance: none) {
+    @include prefix(appearance, $appearance);
+}
+
+/*消除浮动方案*/
+@mixin clearfix($type: pseudo-element) {
+    @if $type == pseudo-element {
+        // 创建伪元素用以清除自身浮动
+        &::after{
+            display: block;
+            overflow: hidden;
+            clear: both;
+            height: 0;
+            content: "\0020";
+        }
+    } @else {
+        // 创建BFC用以清除自身浮动
+        overflow: hidden;
+    }
+}
+
+/*定义字体图标*/
+@mixin yofont() {
+    // 是否开启图标字体
+    @if map-get($ico, is-use) == true {
+        @font-face {
+            font-family: map-get($ico, font-name);
+            src:
+                // 现代浏览器
+                url("#{map-get($ico,font-path)}#{map-get($ico,font-name)}.woff") format("woff"),
+                // Android2.2+
+                url("#{map-get($ico,font-path)}#{map-get($ico,font-name)}.ttf") format("truetype");
+        }
+        .yo-ico {
+            font-family: map-get($ico, font-name) !important;
+            font-style: normal;
+            -webkit-font-smoothing: antialiased;
+            // PC端chrome有锯齿问题，Mobile不需要
+            // -webkit-text-stroke-width: .1px;
+            -moz-osx-font-smoothing: grayscale;
+            vertical-align: middle;
+        }
+    }
+}
