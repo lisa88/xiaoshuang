@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>等高布局3-创建带边框的现列等高布局</title>
+	<style type="text/css">
+		html {
+			background: red;
+			height: auto;
+		}
+
+		body {
+			width: 960px;
+			margin: 20px auto;
+			background: green;
+			border: 1px solid #000;
+		}
+
+		#wrapper {
+			display: inline-block;
+			border-left: 200px solid yellow; /*在最外框的border的颜色值相当于设置sidebar的背景颜色，这样就可以和main在视觉上，高度是一样的了*/
+			position: relative;
+			vertical-align: bottom;
+		}
+
+		#sidebar {
+			float: left;
+			width: 200px;
+			margin-left: -200px;
+			margin-right: -10px;
+			border-right: 10px solid white; /*两条边框叠在一起，无论哪一边的内容长，边框都是按最长的走*/
+			position: relative;
+		}
+
+		#main {
+			float: left;
+			border-left: 10px solid white;
+		}
+
+		#maing,
+		#sidebar{
+			/*padding-bottom: 2em;*/
+		}
+	</style>
+</head>
+<body>
+	<div id="wrapper">
+		<div id="sidebar">
+			<p>2222</p>
+		</div>
+		<div id="main">
+			<p>2222</p>
+			<p>2222</p>
+			<p>2222</p>
+			<p>2222</p>
+			<p>2222</p><p>2222</p>
+			<p>2222</p>
+			<p>2222</p>
+			<p>2222</p><p>2222</p>
+			<p>2222</p>
+			<p>2222</p>
+			<p>2222</p><p>2222</p>
+			<p>2222</p>
+		</div>
+	</div>
+</body>
+</html>

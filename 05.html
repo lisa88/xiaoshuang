@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>使用边框和定位模拟列等高</title>
+	<style type="text/css">
+		#wrapper {
+			width: 960px;
+			margin: 0 auto;
+		}
+
+		#mainContent {
+			border-right: 220px solid #dfdfdf;
+			position: absolute;
+			/*background-color: red; */
+			/*这个方法的弊端，无法单独给主内容列设置背景色，并且实现多列效果不佳*/
+			width: 740px;
+		}
+
+		#sidebar {
+			background: #dfdfdf;
+			margin-left: 740px;
+			position: absolute;
+			width: 220px;
+		}
+	</style>
+</head>
+<body>
+	<div id="wrapper">
+		<div id="mainContent">
+			<p>sdfsdsdf</p>
+			<p>sdfsdsdf</p>
+			<p>sdfsdsdf</p>
+			<p>sdfsdsdf</p>
+		</div>
+		<div id="sidebar">
+			<p>sdfsdsdf</p>
+			<p>sdfsdsdf</p>
+			<p>sdfsdsdf</p>
+			<p>sdfsdsdf</p>
+			<p>sdfsdsdf</p>
+			<p>sdfsdsdf</p>
+			<p>sdfsdsdf</p>
+			<p>sdfsdsdf</p>
+			<p>sdfsdsdf</p>
+			<p>sdfsdsdf</p>
+			<p>sdfsdsdf</p>
+			<p>sdfsdsdf</p>
+			<p>sdfsdsdf</p>
+		</div>
+	</div>
+</body>
+</html>

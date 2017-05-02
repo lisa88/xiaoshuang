@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>等高布局1(给容器div使用单独的背景色（固定布局）)</title>
+	<!-- 给每一列的背景设在单独的<div>元素上，实现原则。任何div元素的最大高度来撑大其他的div容器高度 -->
+	<style type="text/css">
+		.container {
+			width: 960px;
+			height: 240px;
+			border: 10px solid red;
+			margin: 0 auto;
+		}
+		.rightWrap {
+			width: 100%;
+			float: left;
+			overflow: hidden;
+			background: green;
+			position: relative;
+		}
+
+		.contentWrap {
+			float: left;
+			background: orange;
+			width: 100%;
+			position: relative;
+			right: 320px;/*此值等于rightSidebar的宽度*/
+		}
+
+		.leftWrap{
+			width: 100%;
+			background: lime;
+			float:left;
+			position: relative;
+			right: 420px;/*此值等于Content的宽度*/
+		}
+		#left {
+			float: left;
+			width: 220px;
+			overflow: hidden;
+			position: relative;
+			left: 740px;
+		}
+		#content {
+			float: left;
+			width: 420px;
+			overflow: hidden;
+			position:relative;
+			left: 740px;
+		}
+		#right {
+			float: left;
+			overflow: hidden;
+			width: 320px;
+			position: relative;
+			left: 740px;
+		}
+	</style>
+</head>
+<body>
+<!--
+	1, div.rightWrap, div.contentWrap, div.leftWrap都是一个封闭的容器，而div#left,div#content,div#right就是我们所说的列，里面放了内容的。
+	2，每一个容器对应一列的背景色（用来放置背景色和背景图片）:
+	   1）div.rightWrap用来实现div#right列的背景
+	   2）div.contentWrap用来实现div#content列的背景
+	   3）div.leftWrap用来实现div#left列的背景
+	3,除了最外面的容器container外，我都对他们进行了相对定位，并且设置其right值，此值并各相对对应的列宽相等。
+		1）div.contentWrap的right值正好是div#right的宽度
+		2）div.leftWrap的right值正好是div#content的宽度
+	4,给每列进行左浮动，并设置其列宽
+	5,给每一列设置相对定位，并进行”left“设置，而且left的值等于除第一列的所有列宽的和。此列中left的值等于div#right和div#content的两列宽度之和 320+420=740
+	原因，因为leftWrap已经向left移动了320+420=740的宽度了，负出了视口范围这么多，所以里面所以 的元素，想回归到正确的位置，都必训移回来740的left的值，这样位置才能正确
+-->
+	<div class="container">
+		<div class="rightWrap">
+			<div class="contentWrap">
+				<div class="leftWrap">
+					<div class="aside column leftSidebar" id="left">
+						<p>safsaf</p>
+						<p>safsaf</p>
+						<p>safsaf</p>
+						<p>safsaf</p>
+						<p>safsaf</p>
+						<p>safsaf</p>
+						<p>safsaf</p>
+					</div>
+					<div id="content" class="column section">
+						<p>safsaf</p>
+						<p>safsaf</p>
+						<p>safsaf</p>
+						<p>safsaf</p>
+					</div>
+					<div class="aside rightSidebat column" id="right">
+						<p>safsaf</p>
+						<p>safsaf</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

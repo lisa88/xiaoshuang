@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>练习</title>
+	<script type="text/javascript">
+		var a = [1,2,3,4];
+		var b = a;
+		a[0] = 'a';
+		console.log(b[0]);
+
+		var c = 10;
+		var d = c;
+		c = 20;
+		console.log(d);
+
+		var a = [1,2,3,4];
+		var b = [];
+		for (var i = 0; i < a.length; i++) {
+			b[i] = a[i];
+		}
+
+		(function () {
+		    var a = 1;
+		    (function () {
+		        var b = 2;
+		        (function () {
+		            var c = 3;
+		            console.log(c);
+		        })();
+		        console.log(b);
+		    })();
+		    console.log(a);
+		})();
+
+		var cloneObj = function(obj){
+		    var str, newobj = obj.constructor === Array ? [] : {};
+		    if(typeof obj !== 'object'){
+		        return;
+		    } else if(window.JSON){
+		        str = JSON.stringify(obj), //系列化对象
+		        newobj = JSON.parse(str); //还原
+		    } else {
+		        for(var i in obj){
+		            newobj[i] = typeof obj[i] === 'object' ?
+		            cloneObj(obj[i]) : obj[i];
+		        }
+		    }
+		    return newobj;
+		};
+
+	</script>
+</head>
+<body>
+	<h1></h1>
+	<button>修改名字</button>
+</body>
+</html>

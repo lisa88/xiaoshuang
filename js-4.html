@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>继承</title>
+	<script type="text/javascript">
+	// 实现原型链的基本模式
+	// 定义了两个类型SuperType和SubType,每个类型都一个属性和方法。
+	function SuperType(){
+		// 定义属性
+		this.property = true;
+	}
+	// 添加方法
+	SuperType.prototype.getSuperValue = function(){
+		return this.property;
+	};
+
+	function SubType(){
+		// 定义属性
+		this.subproperty = false;
+	}
+	//SubType继承了SuperType，通过创建SuperType的实例，并将该实例赋给SubType.property实现的。
+	// 实现的本质是重写原型对象，代之以一个新类型的实例。
+	// 原来存在SuperType的实例中的所有属性和方法，现在也存在于SubType.prototype中了。
+	SubType.prototype = new SuperType();
+	// SubType不仅具有作为一个SuperType的实例所拥有的全部属性和方法，而且内部还有一个指针，指向了SuperType的原型。
+	// 添加一个方法
+	SubType.prototype.getSuperValue = function(){
+		return this.subproperty;
+	};
+	// instance指向SubType的原型，SubType的原型又指向SuperType的原型。
+	var instance = new SubType();
+	alert(instance.getSuperValue());
+	// getSuperValue方法仍然还在SuperType.prototype中，但property这个属性则位于SubType.prototype中。因，property是这个实例属性，而getSuperValue这个是原型方法。
+
+	// 1.1）原型链的问题
+	function SuperType(){
+		this.colors = ["red","blue","green"];
+	}
+	function SubType(){
+	}
+	SubType.prototype = new SuperType();
+
+	var aa = new SubType();
+	aa.colors.push("black");
+	alert(aa.colors);  //red,blue,green,black
+
+	var bb = new SubType();
+	alert(bb.colors); //red,blue,green,black
+	// aa的修改会影响bb的值
+
+ 	// 2）借用构造函数
+ 	function SuperType(){
+		this.colors = ["red","blue","green"];
+	}
+	function SubType(){
+		// 借调了超类型的构造函数。就会在新SubType对象上执行SuperType（）函数中定义的所有对象初始化代码。
+		SuperType.call(this);
+	}
+	// SubType的每个实例就都会具有自己的colors的属性副本了
+	var aa = new SubType();
+	aa.colors.push("black");
+	alert(aa.colors);  //red,blue,green,black
+
+	var bb = new SubType();
+	alert(bb.colors);//red,blue,green
+
+	// 传递参数
+	function SuperType(name){
+		this.name = name;
+	}
+	function SubType(){
+		// 继承SuperType，同时传递了参数
+		SuperType.call(this,"xiaoshuang");
+
+		// 实例属性
+		this.age = 28;
+	}
+	var aa = new SubType();
+	alert(aa.name);
+	alert(aa.age);
+
+	// 3）组合继承
+	// 构造函数定义两个属性 name,colors
+	function SuperType(name){
+		this.name = name;
+		this.colors = ["red","blue","green"];
+	}
+	// 原型定义了一个方法sayName
+	SuperType.prototype.sayName = function(){
+		alert(this.name);
+	};
+
+	function SubType(name,age){
+		// 继承SuperType，同时传递了参数
+		SuperType.call(this,name);
+
+		// 实例属性
+		this.age = age;
+	}
+	// 原型继承
+	SubType.prototype = new SuperType();
+	// 指回构造函数
+	SubType.prototype.constructor = SubType;
+	// 原型定义新方法
+	SubType.prototype.sayAge = function(){
+		alert(this.age);
+	};
+
+	var aa = new SubType("xiaoshuang",28);
+	aa.colors.push("black");
+	alert(aa.colors);
+	aa.sayName();
+	aa.sayAge();
+
+	var bb = new SubType("deliang",29);
+	alert(bb.colors);
+	bb.sayName();
+	bb.sayAge();
+
+	// 4)原型式继承
+	// 在object（）函数内部，先创建一个临时性的构造函数，然后将传入的对象作为这个构造函数的原型，最后返回了这个临时类型的一个新实例。
+	function Object(o){
+		function F(){}
+		F.prototype = o;
+		return new F();
+	}
+
+	var person = {
+		name: "xiaoshuang",
+		colors: ["red","blue"]
+	};
+	// Object.create()接收两个参数1）用作新对象原型的对象 2）可选 为新对象定义额外属性的对象
+	var person1 = Object.create(person);
+	person1.name = "deliang";
+	person1.colors.push("black");
+
+	var person2 = Object.create(person,{
+		// 以这种方式指定的任何属性都会覆盖原型对象上的同名属性
+		name: {
+			value: "yuhan"
+		}
+	});
+	alert(person2.colors);	//["red", "blue", "black"]
+	alert(person1.colors);  //["red", "blue", "black"]
+	// 缺点，包含引用类型值的属性始终都会共享相应的值。
+
+	// 7）寄生组合式继承
+	// 两个参数1）子类型构造函数 2）超类型构造函数
+	function pro(subType,superType){
+		// 创建超类型原型的一个副本
+		var prototype = Object(superType.prototype);
+		//为副本添加constructor属性（弥补因为重写失去默认onstructor属性）
+		prototype.constructor = subType;
+		//将新创建的对象（副本）赋值给子类型的原型。
+		subType.prototype = prototype;
+	}
+
+	// 构造函数定义两个属性 name,colors
+	function SuperType(name){
+		this.name = name;
+		this.colors = ["red","blue","green"];
+	}
+	// 原型定义了一个方法sayName
+	SuperType.prototype.sayName = function(){
+		alert(this.name);
+	};
+
+	function SubType(name,age){
+		// 继承SuperType.只调用了一次SuperType构造函数
+		SuperType.call(this,name);
+
+		// 实例属性
+		this.age = age;
+	}
+
+	pro(SubType,SuperType);
+
+	SubType.prototype.sayAge = function(){
+		alert(this.age);
+	};
+	</script>
+</head>
+<body>
+	<h1></h1>
+	<button>修改名字</button>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>背景色整行border有空间</title>
+	<style>
+	*{
+		margin: 0;
+		padding: 0;
+	}
+	.demo{
+		list-style: none;
+	}
+	/*使用渐变背景来做边线，但仍然不能解决只改1处边距就同时可以处理了内容边距和边线边距的问题，现在需要，通过padding-left等于15来控制内容边距，需要background-position:15来控制边线边距*/
+	.demo li{
+		line-height: 40px;
+		padding-left: 15px; /*控制内容边距*/
+		background: linear-gradient(transparent 39px, #ccc 39px,#ccc) no-repeat;
+		background-position: 15px; /*控制边线border的边距*/
+	}
+	.demo li:last-child{
+		background-position: 0;
+	}
+	.demo li:hover{
+		background-color: #f3f3f3;
+	}
+
+	</style>
+</head>
+<body>
+	<ul class="demo">
+		<li>ffa</li>
+		<li>ffdda</li>
+		<li>fddfa</li>
+		<li>ffda</li>
+		<li>ffdda</li>
+		<li>ffsaaa</li>
+	</ul>
+</body>
+</html>

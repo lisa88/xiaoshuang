@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>创建对象</title>
+	<script type="text/javascript">
+	// 1）工厂模式
+	function createPerson(name,age){
+		var o = new Object();
+		o.name = name;
+		o.age = age;
+		o.sayName = function(){
+			alert(this.name);
+		};
+		return o;
+	}
+	var person1 = createPerson("xiaoshuang", 28);
+	var person2 = createPerson("deliang", 29);
+	// 工厂模式解决了创建多个相似对象的问题，可以无数次调用createPerson这个函数。但却没有解决对象识别的问题。怎样知道一个对象的类型。
+
+	// 2）构造函数模式
+	// 构造函数名以大写字母开头为了与其它函数区分
+	function Person(name,age){
+		this.name = name;
+		this.age = age;
+		this.sayName = function(){
+			alert(this.name);
+		};
+	}
+	// 要创建Person的新实例，必须要使用new操作符。经历四步骤：
+	// （1）创建一个新对象
+	// （2）将构造函数的作用域赋给新对象（因此this就指向了这个新对象）
+	// （3）执行函数中的代码（为这个新对象添加属性）
+	// （4）返回新对象
+	var person1 = new Person("xiaoshuang", 28);
+	var person2 = new Person("deliang", 29);
+
+	function Person(name,age){
+		this.name = name;
+		this.age = age;
+		this.sayName = sayName; //将sayName属性设置成等于全局的sayName函数
+	}
+	// 把sayName()函数转移到构造函数外部
+	function sayName(){
+		alert(this.name);
+	}
+	// person1和person2共享了全局作用域中的同一个sayName()
+	var person1 = new Person("xiaoshuang", 28);
+	var person2 = new Person("deliang", 29);
+
+	// 3）原型模式
+	// 构造函数是个空函数
+	function Person(){
+	}
+	// 属性和方法被添加到了Person的prototye属性中。
+	Person.prototype.name = "xiaoshuang";
+	Person.prototype.age = 28;
+	Person.prototype.sayName = function(){
+		alert(this.name);
+	};
+	var person1 = new Person();
+	var person2 = new Person();
+	alert(person1.hasOwnProperty("name"));
+	// in操作符返回true,hasOwnProperty返回false,就可以确定是原型中的属性了。
+	function hasPrototypeProperty(Object,name){
+		return !Object.hasOwnProperty(name) && (name in Object);
+	}
+	alert(hasPrototypeProperty(person1,"name"));
+
+	// 3）更简单的原型语法
+	// 3.1）
+	function Person(){
+	}
+	// 视觉上更好的封装原型的功能，用一个包含所有属性和方法的对象字面量来重写整个原型对象
+	Person.prototype = {
+		name: "xiaoshaung",
+		age: 28,
+		sayName: function(){
+			alert(this.name);
+		}
+	};
+	// 此时的constructor函数不在指向person函数，而是指向Object构造函数
+
+	// 3.2）把constructor的值指回来
+	function Person(){
+	}
+	Person.prototype = {
+		constructor: Person, //要让原型对象的constructor属性指回person对象
+		// but 以这种方式重设的constructor属性会导致它的[[Enumerable]]特性设为为true.
+		// 默认情况下，原生的constructor属性是不可枚举的。
+		name: "xiaoshaung",
+		age: 28,
+		sayName: function(){
+			alert(this.name);
+		}
+	};
+
+	// 3.3）Object.defineProperty()方法,修改属性默认的特性。把constructor设置为不可枚举。
+	function Person(){
+	}
+	Person.prototype = {
+		name: "xiaoshaung",
+		age: 28,
+		sayName: function(){
+			alert(this.name);
+		}
+	};
+	// 重设构造函数，只适用于ECMAScript兼容的浏览器
+	// 三个参数，1属性所在的对象person, 2属性的名称"name", 3描述符对象
+	Object.defineProperty(Person.prototype,"constructor",{
+		enumerable: false,
+		value: Person
+	});
+
+	// 3.4）原型的动态型
+	function Person(){
+	}
+	// 创建Person实例
+	var friend = new Person();
+	// 重写其原型对象
+	Person.prototype = {
+		constructor: Person,
+		name: "xiaoshaung",
+		age: 28,
+		sayName: function(){
+			alert(this.name);
+		}
+	};
+	friend.sayName(); //报错 因为firedn指向的原型中不包含以该名字命名的属性。
+	//重写原型对象切断了现有原型与任何之前已经存在的对象实例之间的联系，它们引用的仍然是最初的原型。没有属性的那个原型。
+
+	// 3.6）原型对象的问题
+	function Person(){
+	}
+	Person.prototype = {
+		constructor: Person,
+		name: "xiaoshaung",
+		age: 28,
+		friends: ["yanghan","jing"],
+		sayName: function(){
+			alert(this.name);
+		}
+	};
+
+	var person1 = new Person();
+	var person2 = new Person();
+
+	person1.friends.push("xiaohong");
+
+	// 4）组合使用构造函数模式和原型模式
+	// 构造函数模式定义了实例属性（可传参数自己的）
+	function Person(name,age){
+		this.name = name;
+		this.age = age;
+		this.friends = ["yanghan","jing"];
+	}
+	// 原型模式定义共享的属性和方法（共享的）
+	Person.prototype = {
+		constructor: Person,
+		sayName: function(){
+            alert(this.name);
+        }
+	};
+	var person1 = new Person("xiaoshuang", 28);
+	var person2 = new Person("deliang", 28);
+	// 向person1.friends里添加新字符不会影响person2
+	person1.friends.push("xiaohong");
+
+	person1.friends;	//"yanghan", "jing", "xiaohong"
+	person2.friends;	//"yanghan", "jing"
+	// 能共享同一个方法，不用在每个实例上重新创建一次
+	person1.sayName === person2.sayName; //true
+
+	// 5）动态原型模式（原型被嵌入到构造函数中）
+	function Person(name,age){
+		// 属性
+		this.name = name;
+		this.age = age;
+		// 方法 只在sayName()方法不存在的情况下，才会将它添加到原型中
+		if(typeof this.sayName != "function"){
+			Person.prototype.sayName = function(){
+		        alert(this.name);
+		    };
+		}
+	}
+	var friend = new Person("xiaoshaung",28);
+	friend.sayName();
+
+	//寄生构造函数模式
+	// Person创建了新对象，以相应的属性和方法初始化对象，然后又返回了这个对象
+	function Person(name,age){
+		var o = new Object();
+		o.name = name;
+		o.age = age;
+		o.sayName = function(){
+			alert(this.name);
+		};
+		return o;
+	}
+	// 除了使用了new操作符，并把使用的包装函数叫做构造函数外，其它和工厂模式一样
+	var person1 = new Person("xiaoshuang", 28);
+	</script>
+</head>
+<body>
+	<h1></h1>
+	<button>修改名字</button>
+</body>
+</html>

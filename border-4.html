@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>背景色整行border有空间</title>
+	<style>
+	*{
+		margin: 0;
+		padding: 0;
+	}
+	.demo{
+		list-style: none;
+		border-bottom: 1px solid #ccc;
+	}
+	.demo li{
+		line-height: 40px;
+		padding-left: 20px;
+		/*通过padding-left来控制内容距左边的距离*/
+	}
+	.demo li::after {
+		display: block;
+	    border-bottom: 1px solid #ccc;
+	    content: "";
+	}
+	.demo li:last-child::after{
+		border-bottom: 0 none
+	}
+	.demo li:hover{
+		background-color: #f3f3f3;
+	}
+	</style>
+</head>
+<body>
+	<ul class="demo">
+		<li>ffa</li>
+		<li>ffdda</li>
+		<li>fddfa</li>
+		<li>ffda</li>
+		<li>ffdda</li>
+		<li>ffsaaa</li>
+	</ul>
+</body>
+</html>

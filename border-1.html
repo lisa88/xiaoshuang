@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>背景色整行border有空间</title>
+	<style>
+	/*margin区域无法承载background,因为margin永远是透明的，围绕在盒子之外。所以需要通过增加伪元素来实现border的效果。*/
+	*{
+		margin: 0;
+		padding: 0;
+	}
+	.demo{
+		list-style: none;
+	}
+	.demo li{
+		position: relative;
+		line-height: 40px;
+		padding-left: 15px;
+		/*通过padding-left来控制内容距左边的距离*/
+	}
+	/*增加伪元素，来实现border的效果,用left等于15px来控制border距左则的距离*/
+	.demo li::after {
+	    position: absolute;
+	    right: 0;
+	    bottom: 0;
+	    left: 15px;
+	    border-bottom: 1px solid #ccc;
+	    content: "";
+	}
+	.demo li:last-child::after{
+		left: 0;
+	}
+	.demo li:hover{
+		background-color: #f3f3f3;
+	}
+	/*缺点：当内容的边距修改后，边线的边距也需要手动修改，问题在于他们被单独修改了*/
+	</style>
+</head>
+<body>
+	<ul class="demo">
+		<li>ffa</li>
+		<li>ffdda</li>
+		<li>fddfa</li>
+		<li>ffda</li>
+		<li>ffdda</li>
+		<li>ffsaaa</li>
+	</ul>
+</body>
+</html>
