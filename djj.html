@@ -1,0 +1,240 @@
+<style>
+    #comp-1489457265517{ height:150px; padding: 22px 0; overflow: hidden;}
+    .cus-package{width: 980px; margin: 0 auto; }
+    .cus-package .cus-package-item{display: block; width: 490px;height: 150px;}
+    .cus-package .cus-package-item.item1{background: url(http://img1.qunarzz.com/desmisact/images/1705/3d/45bc26596c1edb.jpg) no-repeat center;}
+    .cus-package .cus-package-item.item2{background: url(http://img1.qunarzz.com/desmisact/images/1705/3a/6d8a13de6367da.jpg) no-repeat center;}
+</style>
+<div class="cus-package clearfix">
+    <a href="javscript:;" class="cus-package-item item2 Qt_fr js-voucher-300"></a>
+    <a href="javscript:;" class="cus-package-item item1 Qt_fl js-voucher-100"></a>
+</div>
+<script type="text/javascript">
+
+var template = '<div class="m-pop-mask">\
+    <div class="m-pop-box">\
+        <p class="m-pop-close"><a class="close-btn" href="javascript:void(0);">×</a></p>\
+        {{#isSuccess}}\
+        <p class="m-succeed">{{messageTitle}}</p>\
+        <p class="m-text">{{message1}}<span>{{message2}}</span></p>\
+        <p class="texinfo">{{message3}}</p>\
+        {{/isSuccess}}\
+        {{^isSuccess}}\
+        <p class="m-failed">{{failText}}</p>\
+        {{/isSuccess}}\
+        <a class="btn" href="javascript:void(0);">{{btnText}}</a>\
+    </div>\
+</div>';
+var currentScheme = '';
+var platformUtils = {
+    getPlatform: function() {
+        var currentPlatform = '';
+
+        var ua = navigator.userAgent.toLowerCase();
+
+        // 判断运营平台是否为 app
+        if (ua.match(/qunar[ia]phone/) !== null) {
+            currentPlatform = 'app';
+        } else if (ua.match(/mobile|android/) !== null) {
+            currentPlatform = 'touch';
+        } else {
+            currentPlatform = 'pc';
+        }
+
+        return currentPlatform;
+    },
+
+    /**
+     * 获取 app 的系统信息，是 android 还是 ios
+     * @return {[type]} [description]
+     */
+    getAppScheme: function () {
+        if (currentScheme) {
+            return currentScheme;
+        }
+
+        var ua = navigator.userAgent.toLowerCase(),
+            scheme = '';
+        if(ua.indexOf("qunariphonepro") != -1) scheme = 'qunariphonepro';
+        else if(ua.indexOf("qunariphonelife") != -1) scheme = 'qunariphonelife';
+        else if(ua.indexOf("qunariphone") != -1) scheme = 'qunariphone';
+        else if(ua.indexOf("qunaraphonelife") != -1) scheme = 'qunaraphonelife';
+        else if(ua.indexOf("qunaraphone") != -1) scheme = 'qunaraphone';
+
+        currentScheme = scheme;
+        return currentScheme;
+    }
+}
+
+var URL_USER_LOGIN = 'http://user.qunar.com/mobile/login.jsp?ret=',
+    URL_USER_LOGIN_PC = 'http://user.qunar.com/login.jsp?ret=';
+
+var URL = {
+    getCoupon: (window.location.host === 'tuan.qunar.com') ?'/activity/api/crossd' : '/mis/api/crossd'
+};
+
+var service = {
+    getCoupon: function(para) {
+        return $.ajax({
+            url: URL.getCoupon,
+            type: 'get',
+            dataType: 'json',
+            data: para
+        })
+    }
+};
+
+
+var ERROR_MAP = {
+    '2': '您已经领取了该红包，不要贪心哦',
+    '4': '很抱歉，红包已抢光！',
+    '7': '很抱歉，代金券已抢光',
+    '6': '来晚啦，活动已结束！',
+    '3': '系统发送失败',
+    '5': '参数不合法'
+};
+
+var Voucher = {
+    init: function() {
+        this.bindEvent();
+    },
+    bindEvent: function() {
+        $(document).on('click', '.js-voucher-300', function(event) {
+            event.preventDefault();
+            getVoucher({ code: 'red' ,source: "99dacu", k: 'coupon'});
+        }).on('click', '.js-voucher-100', function(event) {
+            event.preventDefault();
+            getVoucher({ code: 'gold',source: "99dacu", k: 'coupon'});
+        })
+    }
+}
+Voucher.init();
+
+function getVoucher(para) {
+    var platform = platformUtils.getPlatform(),
+        loginUrl = URL_USER_LOGIN_PC,
+        message = '';
+
+    service.getCoupon(para)
+        .done(function(data) {
+        debugger;
+
+            if (data.errorcode == 6) {
+                showPop({
+                    messageTitle: '请登录后领取红包',
+                    btnText: '确定',
+                    isSuccess: true,
+                    callBack: function() {
+                        window.location.href = loginUrl + encodeURIComponent(window.location.href);
+                    }
+                });
+            } else if (data.ret == 1) {
+                walletName = (data.msg === '【会员红包】') ? '我的钱包' : '我的代金券';
+                showPop({
+                    messageTitle: '恭喜您，领取成功！',
+                    message1: '您已成功获得' + data.credit + '元',
+                    btnText: '知道了',
+                    message2: data.msg,
+                    message3: '请到' + walletName + '中查看',
+                    isSuccess: true,
+                    callBack: function() {}
+                });
+            } else {
+                if(para.code === 'gold' && data.errorcode.toString() == '4'){
+                    data.errorcode = '7';
+                }
+                showPop({
+                    failText: ERROR_MAP[data.errorcode],
+                    btnText: '知道了',
+                    callBack: function() {}
+                });
+                message = data.msg;
+            }
+        })
+}
+
+function showPop(para) {
+    var $template = $(Mustache.render(template ,para));
+
+    $('body').append($template);
+    $template.on('click', '.btn', function(event) {
+        event.preventDefault();
+
+        $template.remove();
+        para.callBack();
+    }).on('click', '.close-btn', function(event) {
+        event.preventDefault();
+
+        $template.remove();
+    });
+}
+
+</script>
+<style>
+/*pop*/
+.m-pop-mask{
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  z-index: 11;
+  background: rgba(0, 0, 0, 0.6);
+  top: 0;
+  left: 0;
+/*  display: none;*/
+}
+.m-pop-box{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 12;
+    margin-left: -220px;
+    margin-top: -120px;
+    vertical-align: middle;
+    width: 440px;
+    height: 240px;
+    border-radius: 5px;
+    background: #fff;
+    text-align: center;
+}
+.m-pop-box .m-pop-close{
+    height: 30px;
+    text-align: right;
+}
+.m-pop-box .close-btn{
+    display: inline-block;
+    width: 30px;
+    color: #666;
+    font-family: arial;
+    font-size: 30px;
+    text-align: center;
+}
+.m-pop-box .m-succeed,
+.m-pop-box .m-failed {
+    padding: 15px;
+    font-size: 24px;
+    color: #ff1f31;
+}
+.m-pop-box .m-failed{
+    color: #333;
+}
+.m-pop-box .m-text{
+    padding:0  15px 15px;
+    font-size: 16px;
+    color: #f4556c;
+}
+.m-pop-box .texinfo {
+    padding: 0 15px 15px;
+    font-size: 14px;
+    color: #666;
+}
+.m-pop-box .btn {
+    display: block;
+    width: 300px;
+    margin: 10px auto 0 auto;
+    background: #ff3b4b;
+    color: #fff;
+    font: 16px/40px microsoft yahei;
+    text-align: center;
+    border-radius: 4px;
+}
+</style>
